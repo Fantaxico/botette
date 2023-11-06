@@ -1,0 +1,16 @@
+# Python compiled files
+*.pyc
+*.pyo
+
+# Virtual environments
+__pycache__/
+.venv/
+env/
+venv/
+
+# Development tools
+*.ipynb
+*.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
