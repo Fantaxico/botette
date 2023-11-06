@@ -8,6 +8,8 @@ from PIL import ImageGrab, Image
 
 game_window_title = "Pokemon Blaze Online"
 
+# Game Window
+
 def getGameWindow():
     try:
         game_window = gw.getWindowsWithTitle(game_window_title)[0]
@@ -28,14 +30,23 @@ def isGameActive():
         return active_window.title == game_window_title
     else:
         False
-    
-def isImageVisable(pathToImage, confidence_level=0.7):
+
+def calculateObjCoordinates(obj_x, obj_y):
+    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
+    print(f"{game_window.width, game_window.height}")
+    new_x = (obj_x / 1936) * game_window.width
+    new_y = (obj_y / 1048) * game_window.height
+    return int(new_x), int(new_y)
+
+# Images
+
+def isImageVisableOnScreen(pathToImage, confidence_level=0.7):
     return pyautogui.locateOnScreen(pathToImage, confidence=confidence_level)
 
-def clickAt(x, y, mouseButton='left'):
-    pyautogui.moveTo(x, y)
-    pyautogui.click(button=mouseButton)
-    
+def getTextFromImage(image):
+    screenshot = Image.open(image)
+    text = pytesseract.image_to_string(screenshot)
+    return text
 
 def takeGameScreenshotCropped(coordinates):
     game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
@@ -51,13 +62,20 @@ def takeGameScreenshotCropped(coordinates):
     cropped_screenshot = screenshot.crop(coordinates)
     cropped_screenshot.save("game_cropped.png")
 
-def textFromImage(image):
-    screenshot = Image.open(image)
-    text = pytesseract.image_to_string(screenshot)
-    return text
+# Controls
+    
+def clickAt(x, y, mouseButton='left'):
+    pyautogui.moveTo(x, y)
+    pyautogui.click(button=mouseButton)
+    time.sleep(0.5)
 
-def printx(x, str):
-    print(f"({x}): {str}")
+def pressKey(key, min_seconds=0.01, max_seconds=0.06):
+    sleep_time = numberRandomize(min_seconds, max_seconds)
+    pyautogui.keyDown(key)
+    time.sleep(sleep_time)
+    pyautogui.keyUp(key)
+
+# Etc
 
 def numberRandomize(min_value, max_value, isInt = False):
     if isInt:
@@ -66,29 +84,7 @@ def numberRandomize(min_value, max_value, isInt = False):
         res = random.uniform(min_value, max_value)
     return res
 
-def press(key, min_seconds, max_seconds, debug = False):
-    sleep_time = numberRandomize(min_seconds, max_seconds)
-    if debug:
-        print("Pressing {key} for {sleep_time}")
-    pyautogui.keyDown(key)
-    time.sleep(sleep_time)
-    pyautogui.keyUp(key)
-
-
-def sliceTextPlusCharacters(text, characters):
-    from_index = text.find("[From]")
-    
-    # Slice the text at "[From]" + the next 50 characters
-    sliced_text = text[from_index + 6:from_index + characters]
-    print(sliced_text)
-    
-    next_chat_entry = sliced_text.find("[")
-    print(next_chat_entry)
-    sliced_text2 = sliced_text[0:next_chat_entry]
-    print(sliced_text2)
-    return sliced_text2
-
-def calcTime(steps):
+def calcStepTime(steps):
     if steps == 1:
         return 0.01, 0.06
     elif steps == 2:
@@ -97,3 +93,10 @@ def calcTime(steps):
         return 0.24, 0.37
     elif steps == 4:
         return 0.44, 0.49
+            
+def printx(x, str):
+    print(f"({x}): {str}")
+
+def printe(str):
+    printx(f"(ERROR): {str}")
+

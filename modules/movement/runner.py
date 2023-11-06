@@ -20,7 +20,7 @@ def run(shared_variables):
                 rand = helper.numberRandomize(0,1,True)
                 if rand == 0:
                     key = "D"
-                helper.press(key, 0.01, 0.05)
+                helper.pressKey(key, 0.01, 0.05)
 
 def selfSet(value, shared):
     shared["isRunning"].value = value

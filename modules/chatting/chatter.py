@@ -15,20 +15,14 @@ def chat(shared_variables):
             isFighting = shared_variables["isFighting"].value
             time.sleep(5)
             printx("Screen monitoring..")
-            hasBeenWhispered = helper.isImageVisable('assets/chat/whisper_from.png', 0.9)
-            friendRequest = helper.isImageVisable('assets/general/friend.png', 0.9)
-            if friendRequest:
-                x, y, width, height = friendRequest
-                helper.clickAt(x, y)
-                time.sleep(0.5)
-                
+            hasBeenWhispered = helper.isImageVisableOnScreen('assets/chat/whisper_from.png', 0.9)                
             if hasBeenWhispered:
                 printx("Whisper detected..")
                 isChatting = selfSet(True, shared_variables)
 
                 # Text recognition
                 helper.takeGameScreenshotCropped(chat_coordinates)
-                chatText = helper.textFromImage("game_cropped.png")
+                chatText = helper.getTextFromImage("game_cropped.png")
 
                 # AI
                 response = ai.chatgptRequest(chatText)
@@ -36,16 +30,15 @@ def chat(shared_variables):
                 # Answer
                 x, y, width, height = hasBeenWhispered
                 helper.clickAt(x, y, mouseButton='right')
-                whisperTo = helper.isImageVisable('assets/chat/whisper_text.png', 0.9)
+                whisperTo = helper.isImageVisableOnScreen('assets/chat/whisper_button.png', 0.9)
                 if whisperTo:
                     x, y, width, height = whisperTo
                     helper.clickAt(x, y)
-                    time.sleep(0.5)
-                    x = helper.isImageVisable('assets/general/x.png', 0.9)
+                    x = helper.isImageVisableOnScreen('assets/chat/whisper_button_x.png', 0.9)
                     if x:
                         x, y, width, height = x
                         helper.clickAt(x+5, y+5)
-                        chatField = helper.isImageVisable('assets/chat/chat_entry.png', 0.9)
+                        chatField = helper.isImageVisableOnScreen('assets/chat/chat_entry.png', 0.9)
                         if chatField:
                             time.sleep(1)
                             x, y, width, height = chatField
@@ -54,6 +47,7 @@ def chat(shared_variables):
                             sendMessage(response)
                             time.sleep(1)
                             helper.clickAt(x, y)
+
                             sendMessage("/clear")
                             time.sleep(1)
                         
@@ -63,15 +57,16 @@ def chat(shared_variables):
 
                             printx("Message sent")
                             isChatting = selfSet(False, shared_variables)
+                else:
+                    helper.printe("")
 
+def sendMessage(text):
+    pyautogui.write(text)
+    helper.pressKey("ENTER", 0.1, 0.5)
 
 def selfSet(value, shared):
     shared["isChatting"].value = value
     return value
-
-def sendMessage(text):
-    pyautogui.write(text)
-    helper.press("ENTER", 0.1, 0.5)
 
 def printx(str):
     print(f"(Chatter): {str}")

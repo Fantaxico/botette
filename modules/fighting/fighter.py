@@ -12,7 +12,7 @@ def fight(shared_variables):
             time.sleep(1)
             printx("Screen monitoring..")
             #printx("Screening for battle..")
-            hasBattleScreen = helper.isImageVisable('assets/general/battle.png', 0.9)
+            hasBattleScreen = helper.isImageVisableOnScreen('assets/general/battle.png', 0.9)
             if hasBattleScreen:
                 x, y, width, height = hasBattleScreen
                 printx(f"Battle detected")
@@ -23,7 +23,7 @@ def fight(shared_variables):
 
             if not isChatting and isFighting:
                 printx(f"Fighting..")
-                move_location = helper.isImageVisable('assets/moves/bugbuzz.png')
+                move_location = helper.isImageVisableOnScreen('assets/moves/bugbuzz.png')
                 if move_location:
                     x, y, width, height = move_location
                 else:
