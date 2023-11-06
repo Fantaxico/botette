@@ -13,7 +13,7 @@ shared_variables = {
 
 if __name__ == '__main__':
     helper.printx("Bot", "Starting..")
-    helper.bring_game_to_front()
+    helper.bringGameToFront()
     time.sleep(2)
 
     running_process = Process(target=runner.run, args=(shared_variables,))

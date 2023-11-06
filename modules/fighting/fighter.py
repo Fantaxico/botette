@@ -6,12 +6,13 @@ from services import helper
 def fight(shared_variables):
     # We want it to run indefinitly
     while True:
-        if helper.is_game_active():
+        if helper.isGameActive():
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value 
             time.sleep(1)
+            printx("Screen monitoring..")
             #printx("Screening for battle..")
-            hasBattleScreen = pyautogui.locateOnScreen('assets/general/battle.png', confidence=0.9)
+            hasBattleScreen = helper.isImageVisable('assets/general/battle.png', 0.9)
             if hasBattleScreen:
                 x, y, width, height = hasBattleScreen
                 printx(f"Battle detected")

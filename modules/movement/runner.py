@@ -4,7 +4,7 @@ from services import helper
 def run(shared_variables):
     # We want it to run indefinitly
     while True:
-        if helper.is_game_active():
+        if helper.isGameActive():
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
             isRunning = shared_variables["isRunning"].value
@@ -15,9 +15,12 @@ def run(shared_variables):
                 isRunning = selfSet(True, shared_variables)
             
             if isRunning:
-                printx("Running..")
-                helper.press("A", 0.01, 0.05)
-                helper.press("D", 0.01, 0.05)
+                printx(f"Running.. ({isChatting}/{isFighting}/{isRunning})")
+                key = "A"
+                rand = helper.numberRandomize(0,1,True)
+                if rand == 0:
+                    key = "D"
+                helper.press(key, 0.01, 0.05)
 
 def selfSet(value, shared):
     shared["isRunning"].value = value
