@@ -1,5 +1,5 @@
 import time
-from services import helper
+from services.helper import helper
 
 def run(shared_variables):
     # We want it to run indefinitly
@@ -16,11 +16,13 @@ def run(shared_variables):
             
             if isRunning:
                 printx(f"Running.. ({isChatting}/{isFighting}/{isRunning})")
-                key = "A"
+                helper.pressKey("UP", 0.01, 0.05)
+                helper.pressKey("DOWN", 0.01, 0.05)
+                key = "UP"
                 rand = helper.numberRandomize(0,1,True)
                 if rand == 0:
-                    key = "D"
-                helper.pressKey(key, 0.01, 0.05)
+                    key = "DOWN"
+                
 
 def selfSet(value, shared):
     shared["isRunning"].value = value

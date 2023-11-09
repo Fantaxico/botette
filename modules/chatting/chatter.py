@@ -1,11 +1,12 @@
 import time
 import random
 import pyautogui
-from services import helper
+from services.helper import helper
 from modules.chatting import ai
 
 # Overwrite this with window size
-chat_coordinates = (1040, 720, 1450, 900)
+chatCoordinates = (1040, 720, 1450, 900)
+chatName = "chat_cropped.png"
 
 def chat(shared_variables):
     # We want it to run indefinitly
@@ -21,8 +22,8 @@ def chat(shared_variables):
                 isChatting = selfSet(True, shared_variables)
 
                 # Text recognition
-                helper.takeGameScreenshotCropped(chat_coordinates)
-                chatText = helper.getTextFromImage("game_cropped.png")
+                helper.takeGameScreenshotCropped(chatName, chatCoordinates)
+                chatText = helper.getTextFromImage(chatName)
 
                 # AI
                 response = ai.chatgptRequest(chatText)
@@ -60,9 +61,6 @@ def chat(shared_variables):
                 else:
                     helper.printe("")
 
-def sendMessage(text):
-    pyautogui.write(text)
-    helper.pressKey("ENTER", 0.1, 0.5)
 
 def selfSet(value, shared):
     shared["isChatting"].value = value

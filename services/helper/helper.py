@@ -33,7 +33,7 @@ def isGameActive():
 
 def calculateObjCoordinates(obj_x, obj_y):
     game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
-    print(f"{game_window.width, game_window.height}")
+    #printx("Debug", f"calculateObjCoordinates: {game_window.width, game_window.height}")
     new_x = (obj_x / 1936) * game_window.width
     new_y = (obj_y / 1048) * game_window.height
     return int(new_x), int(new_y)
@@ -48,7 +48,16 @@ def getTextFromImage(image):
     text = pytesseract.image_to_string(screenshot)
     return text
 
-def takeGameScreenshotCropped(coordinates):
+def solvePin():
+    takeGameScreenshotCropped("pin_cropped.png", (800, 490, 1100, 530))
+    pin_text = getTextFromImage("pin_cropped.png")
+    pin = re.findall(r"\[(.*?)\]", pin_text)
+    if pin:
+        return pin[0]
+    else:
+        return None
+
+def takeGameScreenshotCropped(name,coordinates):
     game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
     screenshot = ImageGrab.grab(
         bbox=(
@@ -60,20 +69,24 @@ def takeGameScreenshotCropped(coordinates):
     )
     #(left, upper, right, lower)
     cropped_screenshot = screenshot.crop(coordinates)
-    cropped_screenshot.save("game_cropped.png")
+    cropped_screenshot.save(name)
 
 # Controls
     
 def clickAt(x, y, mouseButton='left'):
     pyautogui.moveTo(x, y)
     pyautogui.click(button=mouseButton)
-    time.sleep(0.5)
+    time.sleep(0.3)
 
 def pressKey(key, min_seconds=0.01, max_seconds=0.06):
     sleep_time = numberRandomize(min_seconds, max_seconds)
     pyautogui.keyDown(key)
     time.sleep(sleep_time)
     pyautogui.keyUp(key)
+
+def sendMessage(text):
+    pyautogui.write(text)
+    pressKey("ENTER", 0.1, 0.5)
 
 # Etc
 
