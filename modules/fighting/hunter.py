@@ -11,7 +11,6 @@ def hunt(shared_variables):
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
             isWatching = shared_variables["isWatching"].value 
-            printx("Screen monitoring..")
             hasBattleScreen = helper.isImageVisableOnScreen('assets/general/battle.png', 0.9)
             if hasBattleScreen:
                 x, y, width, height = hasBattleScreen

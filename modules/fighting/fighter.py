@@ -10,8 +10,9 @@ def fight(shared_variables):
         if helper.isGameActive():
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
-            isWatching = shared_variables["isWatching"].value 
-            time.sleep(0.3)
+            isWatching = shared_variables["isWatching"].value
+            # Simulate reaction time
+            time.sleep(helper.numberRandomize(0.1, 1))
             printx("Screen monitoring..")
             #printx("Screening for battle..")
             hasBattleScreen = helper.isImageVisableOnScreen('assets/general/battle.png', 0.9)
