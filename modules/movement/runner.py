@@ -8,20 +8,28 @@ def run(shared_variables):
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
             isRunning = shared_variables["isRunning"].value
-
+            
             if isFighting or isChatting:
                 isRunning = selfSet(False, shared_variables)
             else:
                 isRunning = selfSet(True, shared_variables)
             
             if isRunning:
-                printx(f"Running.. ({isChatting}/{isFighting}/{isRunning})")
-                helper.pressKey("UP", 0.01, 0.05)
-                helper.pressKey("DOWN", 0.01, 0.05)
-                key = "UP"
-                rand = helper.numberRandomize(0,1,True)
-                if rand == 0:
-                    key = "DOWN"
+                rand = helper.numberRandomize(0,1)
+                holdTimes = (0.44, 0.49)
+                # 10% chance to occur
+                if rand == 0.1:
+                     printx("Randomize")
+                     # Randomize less steps to go
+                     rand = helper.numberRandomize(1,3, isInt=True)
+                     min, max = helper.calcStepTime(rand)
+                     # Edid hold times to be earlier
+                     holdTimes = (min, max)
+
+                printx(f"Running..")
+                # Keep holding to go 4 steps(clean) be sure to be in a spot with walls
+                helper.pressKey("LEFT", holdTimes[0], holdTimes[1])
+                helper.pressKey("RIGHT", holdTimes[0], holdTimes[1])
                 
 
 def selfSet(value, shared):
