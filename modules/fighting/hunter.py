@@ -36,9 +36,12 @@ def hunt(shared_variables):
                         tryCatch()
                 else:
                     printx("Hunting..")
-                    x, y = locator.run
-                    helper.clickAt(x, y)
-                    
+                    move_location = helper.isImageVisableOnScreen('assets/moves/shockwave.png')
+                    if move_location:
+                        x, y, width, height = move_location
+                        pyautogui.moveTo(x, y)
+                        pyautogui.click()
+                        
 
 
 def tryCatch(shared_variables):
