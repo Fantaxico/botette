@@ -33,7 +33,7 @@ def hunt(shared_variables):
                         helper.sendMessage(pin)
                         button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
                         helper.clickAt(button_x, button_y)
-                        tryCatch()
+                        tryCatch(shared_variables)
                 else:
                     printx("Hunting..")
                     move_location = helper.isImageVisableOnScreen('assets/moves/shockwave.png')
