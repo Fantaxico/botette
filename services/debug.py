@@ -1,8 +1,10 @@
 import pyautogui
 import time
-import helper
+from helper import helper
 import locator 
+import cv2
 import re
+import json
 
 def game_window_coordinates():
     time.sleep(2)
@@ -12,17 +14,15 @@ def game_window_coordinates():
 def get_mouse_position():
     time.sleep(3)
     x, y = pyautogui.position()
-    print(f"Mouse position: x={x}, y={y}")
+    print(f"""
+          Mouse position: x={x}, y={y}
+          
+    """)
+
 
 #(left, upper, right, lower) (x, y, x + width, y + height)
 def test():
-    time.sleep(3)
-    helper.takeGameScreenshotCropped("pin_cropped.png", (800, 490, 1100, 530))
-    pin_text = helper.getTextFromImage("pin_cropped.png")
-    pin = re.findall(r"\[(.*?)\]", pin_text)
-    if pin:
-        return pin[0]
-    else:
-        return None
+    print("")
+
 
 test()

@@ -5,4 +5,4 @@ def coordinatesRelativeTo(relativeObj, diff_x = 0, diff_y = 0):
     return helper.calculateObjCoordinates(x + diff_x, y + diff_y) 
 
 bag = helper.calculateObjCoordinates(1314, 577) 
-run = helper.calculateObjCoordinates(1328, 623) 
+run = helper.calculateObjCoordinates(1328, 623)

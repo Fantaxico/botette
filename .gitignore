@@ -18,3 +18,4 @@ venv/
 # Game files
 game_cropped.png
 *.env
+config.json

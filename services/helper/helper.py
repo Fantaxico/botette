@@ -5,10 +5,11 @@ import pyautogui
 import pytesseract
 import re
 from PIL import ImageGrab, Image
-
-game_window_title = "Pokemon Blaze Online"
+import cv2
+import os
 
 # Game Window
+game_window_title = "Pokemon Blaze Online"
 
 def getGameWindow():
     try:
@@ -43,21 +44,21 @@ def calculateObjCoordinates(obj_x, obj_y):
 def isImageVisableOnScreen(pathToImage, confidence_level=0.7):
     return pyautogui.locateOnScreen(pathToImage, confidence=confidence_level)
 
-def getTextFromImage(image):
-    screenshot = Image.open(image)
+def getTextFromImage(imagePath):
+    screenshot = Image.open(imagePath)
     text = pytesseract.image_to_string(screenshot)
     return text
 
-def solvePin():
-    takeGameScreenshotCropped("pin_cropped.png", (800, 490, 1100, 530))
-    pin_text = getTextFromImage("pin_cropped.png")
+def solvePin(image_path):
+    takeGameScreenshotCropped(image_path, (800, 490, 1100, 530))
+    pin_text = getTextFromImage(image_path)
     pin = re.findall(r"\[(.*?)\]", pin_text)
     if pin:
         return pin[0]
     else:
         return None
 
-def takeGameScreenshotCropped(name,coordinates):
+def takeGameScreenshotCropped(imagePath, coordinates, greyscale = False):
     game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
     screenshot = ImageGrab.grab(
         bbox=(
@@ -67,9 +68,10 @@ def takeGameScreenshotCropped(name,coordinates):
             game_window.top + game_window.height
         )
     )
-    #(left, upper, right, lower)
     cropped_screenshot = screenshot.crop(coordinates)
-    cropped_screenshot.save(name)
+    cropped_screenshot.save(imagePath)
+    if greyscale:
+        greyScaleImage(imagePath)
 
 # Controls
     
@@ -89,6 +91,19 @@ def sendMessage(text):
     pressKey("ENTER", 0.1, 0.5)
 
 # Etc
+
+def greyScaleImage(imagePath):
+    basewidth = 300
+    img = Image.open(imagePath)
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = int((float(img.size[1])*float(wpercent)))
+    img = img.resize((basewidth,hsize))
+    img.save(imagePath)
+
+    img = cv2.imread(imagePath)
+    grayscaled = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    retval, threshold2 = cv2.threshold(grayscaled,125,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    cv2.imwrite(imagePath + '.jpeg',threshold2)
 
 def numberRandomize(min_value, max_value, isInt = False):
     if isInt:

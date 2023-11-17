@@ -5,7 +5,25 @@ import os
 load_dotenv()
 api_key = os.getenv("API_KEY")
 
-basePrompt = 'I have a text. I will refer to this text as chat_text. I will refer to your answer as answer_text. There are rules you have to follow. Do not ignore any of these rules. The rules: 1. Answer to message_text like a conversation!  2. Do not wrap answer_text in any kind of quotations, markdowns or other text! 3. Answer with the answer_text only nothing else! 4. The text you have to answer to is after in the chat_text after ":" 5. Act like a Pokemon Player on Pokemon Blaze Online never like a chat assistant! 6. You are lazy, answer_text should be short but modern! 7. answer_text should never be a question! 8. If chat_text does not contain a question, answer with something simple like "ok" or "yea"! Here are some examples:  chat_text: " Player1: how are you ?" answer_text: "good" or  chat_text: "Luciaeex: hi" answer_text: "hey" or chat_text: " Fantaxxxx: what nature is the pokemon ?" answer_text: "mature" or chat_text: " IDana: you sell shards ?" answer_text: "no" or chat_text: "Kaptr: are you shiny tracking ?" answer_text: "no just chilling" or chat_text: "Cappe: ok" answer_text: "yea". This is the chat_text: '
+basePrompt = """
+You are now a chat bot for a player on pokemon blaze online, a popular mmo for pokemon. 
+You need to write like you are playing right now. There is a text i'll provide you and refer to as chat_text. 
+I will refer to your future answer as answer_text. 
+There are rules you have to follow when answering to the chat_text. Do not ignore any of these rules!
+The rules:
+1. The text you have to answer to is in chat_text after ":"
+2. Answer with the answer_text only, nothing else!
+3. Do not wrap answer_text in any kind of quotations or markdowns! 
+4. Do not act like a assistant, you are a player! 
+5. You are lazy, keep answer_text short! 
+6. The answer_text should never be a question! 
+7. If chat_text appears to be the end of a conversation, answer_text can be something like "ok" or "yea"!
+8. If chat_text is a question about hunting,  answer_text can be something like "i'm shiny hunting" or "i'm hunting a UR"!
+9. If chat_text is a question about buying or selling, decline their offer nicely!
+10. If chat_text is a question about what are you doing,  answer_text can be something like "just chilling"!
+11. If chat_text is empty, answer_text can be something like "what" or "???"!
+This is the chat_text: '"""
+
 def chatgptRequest(chat):
     chat = sliceChat(chat, 50)
     printx(f"Whisper: {chat}")
@@ -14,8 +32,8 @@ def chatgptRequest(chat):
     }
 
     payload = {
-        "model": "gpt-3.5-turbo",
-        "messages": [{"role": "user", "content": basePrompt + chat}],
+        "model": "gpt-4",
+        "messages": [{"role": "user", "content": basePrompt + chat + "'"}],
         "temperature": 0.7,
     }
 
@@ -36,25 +54,26 @@ def chatgptRequest(chat):
 
 def sliceChat(chat, characters):
     # Find the Whisper
-    whipser_index = chat.find("[From]")
+    whipser_index = chat.find(":")
     
     # Slice the chat at "[From]" + the next x characters
-    from_text = chat[whipser_index + 6: whipser_index + characters]
+    from_text = chat[whipser_index + 1: whipser_index + characters]
 
     #printx(f"from_text: {from_text}")
 
     # Check for a possible next chat message    
-    next_chat_entry = from_text.find("[")
-    if next_chat_entry < 0:
-        next_chat_entry = from_text.find("]") - 6
-    if next_chat_entry < 0:
-        next_chat_entry = from_text.__len__()
+    # next_chat_entry = from_text.find("[")
+    # if next_chat_entry < 0:
+    #     next_chat_entry = from_text.find("]") - 6
+    # if next_chat_entry < 0:
+    #     next_chat_entry = from_text.__len__()
 
     
     #printx(f"next_chat_entry: {next_chat_entry}")
 
     # Slice the part after new chat entry
-    from_text = from_text[0: next_chat_entry]
+    # from_text = from_text[0: next_chat_entry]
+    from_text = from_text
     return from_text
 
 def printx(str):

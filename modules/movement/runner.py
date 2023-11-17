@@ -19,7 +19,7 @@ def run(shared_variables):
                 holdTimes = (0.44, 0.49)
                 # 10% chance to occur
                 if rand <= 0.3:
-                     printx("Randomize")
+                     # printx("Randomize")
                      # Randomize less steps to go
                      rand = helper.numberRandomize(1,3, isInt=True)
                      min, max = helper.calcStepTime(rand)
