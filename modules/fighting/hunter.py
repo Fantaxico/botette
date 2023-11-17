@@ -93,11 +93,11 @@ def tryCatch(shared_variables, encounter):
                 bag_x, bag_y = locator.bag
                 helper.clickAt(bag_x, bag_y)
                 bag = [
-                    ('Ultra Ball', f'{assetsDir}/general/ultra.png'),
-                    ('Master Ball', f'{assetsDir}/general/master.png'),
-                    ('Great Ball', f'{assetsDir}/general/great.png'),
-                    ('Starter Ball', f'{assetsDir}/general/starter.png'),
-                    ('Poke Ball', f'{assetsDir}/general/regular.png'),
+                    ('Ultra Ball', f'{assetsDir}/general/balls/ultra.png'),
+                    ('Master Ball', f'{assetsDir}/general/balls/master.png'),
+                    ('Great Ball', f'{assetsDir}/general/balls/great.png'),
+                    ('Starter Ball', f'{assetsDir}/general/balls/starter.png'),
+                    ('Poke Ball', f'{assetsDir}/general/balls/regular.png'),
                 ]
                 for ball, image in bag:
                     hasBall = helper.isImageVisableOnScreen(image, 0.9)
