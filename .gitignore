@@ -19,3 +19,4 @@ venv/
 game_cropped.png
 *.env
 config.json
+working_directory/*
