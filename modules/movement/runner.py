@@ -1,7 +1,9 @@
 import time
 from services.helper import helper
 
-def run(shared_variables):
+def run(shared_variables, direction, invert):
+    directions = direction.split("/")
+    if invert: directions = helper.swapIndex(directions, 0, 1)
     # We want it to run indefinitly
     while True:
         if helper.isGameActive():
@@ -28,8 +30,8 @@ def run(shared_variables):
 
                 printx(f"Running..")
                 # Keep holding to go 4 steps(clean) be sure to be in a spot with walls
-                helper.pressKey("LEFT", holdTimes[0], holdTimes[1])
-                helper.pressKey("RIGHT", holdTimes[0], holdTimes[1])
+                helper.pressKey(directions[0], holdTimes[0], holdTimes[1])
+                helper.pressKey(directions[1], holdTimes[0], holdTimes[1])
                 
 
 def selfSet(value, shared):

@@ -92,6 +92,13 @@ def sendMessage(text):
 
 # Etc
 
+def swapIndex(array, index1, index2):
+    temp1 = array[index1]
+    temp2 = array[index2]
+    array[index1] = temp2
+    array[index2] = temp1
+    return array
+
 def greyScaleImage(imagePath):
     basewidth = 300
     img = Image.open(imagePath)

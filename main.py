@@ -20,6 +20,8 @@ if __name__ == '__main__':
     runFromFights = data["RunFromFights"]
     targets = [target['Name'] for target in data["Targets"]]
     moveToUse = data["Move"]
+    runningDirection = data["RunningDirection"]
+    invertRunning = data["InvertRunning"]
     debugMode = data["Debug"]
 
     helper.printx("Bot", "Starting..")
@@ -28,6 +30,8 @@ if __name__ == '__main__':
          helper.printx("Debug", "-------------------------------")
          helper.printx("Debug",f"Bot directory: {thisDir}")
          helper.printx("Debug",f"Hunt: {doHunt}")
+         helper.printx("Debug",f"Running direction: {runningDirection}")
+         helper.printx("Debug",f"Invert direction: {invertRunning}")
          helper.printx("Debug",f"Catching targets: {targets}")
          helper.printx("Debug",f"Run from fights: {runFromFights}")
          helper.printx("Debug",f"Fighting move: {moveToUse}")
@@ -43,7 +47,7 @@ if __name__ == '__main__':
     
     time.sleep(2)
     helper.bringGameToFront()
-    running_process = Process(target=runner.run, args=(shared_variables,))
+    running_process = Process(target=runner.run, args=(shared_variables, runningDirection, invertRunning))
     fighting_process = Process(target=hunter.hunt, args=(thisDir, shared_variables, data["Targets"], moveToUse, doHunt, runFromFights))
     #chatting_process = Process(target=chatter.chat, args=(shared_variables,))
     #watching_process = Process(target=watcher.watch, args=(shared_variables,))
