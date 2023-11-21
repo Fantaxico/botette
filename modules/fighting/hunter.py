@@ -10,7 +10,7 @@ load_dotenv()
 assetsDir = os.getenv("ASSET_DIR")
 workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
-nameCoordinates = (927, 299, 1015, 313)
+nameCoordinates = (927, 299, 1015, 315)
 
 def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights):
     assetsDir = thisDir + "/assets"
