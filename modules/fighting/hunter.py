@@ -9,7 +9,8 @@ load_dotenv()
 
 assetsDir = os.getenv("ASSET_DIR")
 workingDir = os.getenv("WORKING_DIR")
-nameCoordinates = (900, 270, 1015, 313)
+#(left, upper, right, lower)
+nameCoordinates = (927, 299, 1015, 313)
 
 def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights):
     assetsDir = thisDir + "/assets"
@@ -46,15 +47,17 @@ def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights):
                             helper.sendMessage(pin)
                             button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
                             helper.clickAt(button_x, button_y)
-                            tryCatch(shared_variables, "Unknown (Pin Solver)")
+                            tryCatch(shared_variables, {"Name": "Pin Solver", "PriorityBall": { "Name" : "Ultra Ball"}})
                     else:
                         printx("Hunting..")
                         helper.takeGameScreenshotCropped(monImagePath, nameCoordinates, greyscale=True)
                         encounter = helper.getTextFromImage(monImagePath + '.jpeg')
                         encounter = encounter.strip()
                         printx("Encounter is: " + encounter)
-                        if encounter in targets:
-                            tryCatch(shared_variables, encounter)
+                        for target in targets:
+                            if encounter == target["Name"]:
+                                printx("Encounter is a target")
+                                tryCatch(shared_variables, target)
                         else:
                             if runFromFights:
                                 flee()
@@ -80,28 +83,27 @@ def fight(moveToUse):
         pyautogui.moveTo(x, y)
         pyautogui.click()
 
-def tryCatch(shared_variables, encounter):
+def tryCatch(shared_variables, target):
     while True:
         # We need battle check to know when its captured
         hasBattleScreen = helper.isImageVisableOnScreen(f'{assetsDir}/general/battle.png', 0.9)
         if hasBattleScreen:
             isChatting = shared_variables["isChatting"].value
             isWatching = shared_variables["isWatching"].value 
-            printx(f"Catching {encounter}..")
-            time.sleep(3)
+            printx(f"Catching {target["Name"]}..")
             if not isChatting and not isWatching:
                 bag_x, bag_y = locator.bag
                 helper.clickAt(bag_x, bag_y)
                 bag = [
-                    ('Ultra Ball', f'{assetsDir}/general/balls/ultra.png'),
-                    ('Master Ball', f'{assetsDir}/general/balls/master.png'),
-                    ('Great Ball', f'{assetsDir}/general/balls/great.png'),
-                    ('Starter Ball', f'{assetsDir}/general/balls/starter.png'),
-                    ('Poke Ball', f'{assetsDir}/general/balls/regular.png'),
+                    (target["PriorityBall"]["Name"],f'{assetsDir}/general/balls/{target["PriorityBall"]["Name"].lower()}.png'),
+                    ('Ultra Ball', f'{assetsDir}/general/balls/ultra ball.png'),
+                    ('Master Ball', f'{assetsDir}/general/balls/master ball.png'),
+                    ('Great Ball', f'{assetsDir}/general/balls/great ball.png')
                 ]
                 for ball, image in bag:
                     hasBall = helper.isImageVisableOnScreen(image, 0.9)
                     if hasBall:
+                        time.sleep(3)
                         printx(f"Using a {ball}")
                         x, y, width, height = hasBall
                         helper.clickAt(x, y)

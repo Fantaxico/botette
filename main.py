@@ -18,7 +18,7 @@ if __name__ == '__main__':
     
     doHunt = data["Hunt"]
     runFromFights = data["RunFromFights"]
-    targets = data["Targets"]
+    targets = [target['Name'] for target in data["Targets"]]
     moveToUse = data["Move"]
     debugMode = data["Debug"]
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     time.sleep(2)
     helper.bringGameToFront()
     running_process = Process(target=runner.run, args=(shared_variables,))
-    fighting_process = Process(target=hunter.hunt, args=(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights))
+    fighting_process = Process(target=hunter.hunt, args=(thisDir, shared_variables, data["Targets"], moveToUse, doHunt, runFromFights))
     #chatting_process = Process(target=chatter.chat, args=(shared_variables,))
     #watching_process = Process(target=watcher.watch, args=(shared_variables,))
 
