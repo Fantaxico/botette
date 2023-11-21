@@ -12,11 +12,12 @@ workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
 nameCoordinates = (927, 299, 1015, 315)
 
-def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights):
+def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, fleeFromFights):
     assetsDir = thisDir + "/assets"
     workingDir = thisDir + "/working_directory"
     monImagePath = f"{workingDir}/mon_cropped.png"
     pinImagePath = f"{workingDir}/pin_cropped.png"
+    debugMode = shared_variables["debugMode"].value 
 
     # We want it to run indefinitly
     while True:
@@ -59,12 +60,12 @@ def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, runFromFights):
                                 printx("Encounter is a target")
                                 tryCatch(shared_variables, target)
                         else:
-                            if runFromFights:
+                            if fleeFromFights:
                                 flee()
                             else:
                                 fight(moveToUse)
                 else:
-                    if runFromFights:
+                    if fleeFromFights:
                         flee()
                     else:
                         fight(moveToUse)

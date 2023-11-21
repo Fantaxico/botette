@@ -1,9 +1,10 @@
 import time
 from services.helper import helper
 
-def run(shared_variables, direction, invert):
+def run(shared_variables, direction, invert, randomness):
     directions = direction.split("/")
     if invert: directions = helper.swapIndex(directions, 0, 1)
+    debugMode = shared_variables["debugMode"].value 
     # We want it to run indefinitly
     while True:
         if helper.isGameActive():
@@ -17,13 +18,13 @@ def run(shared_variables, direction, invert):
                 isRunning = selfSet(True, shared_variables)
             
             if isRunning:
-                rand = helper.numberRandomize(0,1)
+                rand = helper.numberRandomize(0, 1)
                 holdTimes = (0.44, 0.49)
                 # 10% chance to occur
-                if rand <= 0.3:
-                     # printx("Randomize")
+                if rand <= (randomness / 10):
                      # Randomize less steps to go
-                     rand = helper.numberRandomize(1,3, isInt=True)
+                     rand = helper.numberRandomize(1, 3, isInt=True)
+                     if debugMode: printx(f"Randomness edited steps to {rand}")
                      min, max = helper.calcStepTime(rand)
                      # Edid hold times to be earlier
                      holdTimes = (min, max)
