@@ -6,7 +6,13 @@ import pytesseract
 import re
 from PIL import ImageGrab, Image
 import cv2
+import json
+import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
+workingDir = os.getenv("WORKING_DIR")
 
 # Game Window
 game_window_title = "Pokemon Blaze Online"
@@ -47,6 +53,7 @@ def isImageVisableOnScreen(pathToImage, confidence_level=0.7):
 def getTextFromImage(imagePath):
     screenshot = Image.open(imagePath)
     text = pytesseract.image_to_string(screenshot)
+    text = text.strip()
     return text
 
 def solvePin(image_path):
@@ -58,7 +65,7 @@ def solvePin(image_path):
     else:
         return None
 
-def takeGameScreenshotCropped(imagePath, coordinates, greyscale = False):
+def takeGameScreenshotCropped(imagePath, coordinates, greyscale = False, basewidth=300):
     game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
     screenshot = ImageGrab.grab(
         bbox=(
@@ -71,7 +78,19 @@ def takeGameScreenshotCropped(imagePath, coordinates, greyscale = False):
     cropped_screenshot = screenshot.crop(coordinates)
     cropped_screenshot.save(imagePath)
     if greyscale:
-        greyScaleImage(imagePath)
+        greyScaleImage(imagePath, basewidth)
+
+def takeGameScreenshot(imagePath):
+    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
+    screenshot = ImageGrab.grab(
+        bbox=(
+            game_window.left, 
+            game_window.top, 
+            game_window.left + game_window.width, 
+            game_window.top + game_window.height
+        )
+    )
+    screenshot.save(imagePath)
 
 # Controls
     
@@ -90,6 +109,24 @@ def sendMessage(text):
     pyautogui.write(text)
     pressKey("ENTER", 0.1, 0.5)
 
+# Notifications
+
+def sendDiscordNotification(message, withScreenshot=False):
+    webhook_url = 'https://discord.com/api/webhooks/1176979268119576576/-KdIk8HJDBgy-452JQBW4o6IOssV8FNWHCZUW5yb6xw1Uxj5HKGK2jZcZ9ybTA_vm9On'
+    data = {
+        'content': message
+    }
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    response = requests.post(webhook_url, data=json.dumps(data), headers=headers)
+
+    if response.status_code == 204:
+        printx("Bot", "Notification sent successfully!")
+    else:
+        printx("Bot", f"Failed to send notification. Status code: {response.status_code}")
+
+
 # Etc
 
 def swapIndex(array, index1, index2):
@@ -99,8 +136,7 @@ def swapIndex(array, index1, index2):
     array[index2] = temp1
     return array
 
-def greyScaleImage(imagePath):
-    basewidth = 300
+def greyScaleImage(imagePath, basewidth=300):
     img = Image.open(imagePath)
     wpercent = (basewidth/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
@@ -133,5 +169,5 @@ def printx(x, str):
     print(f"({x}): {str}")
 
 def printe(str):
-    printx(f"(ERROR): {str}")
+    printx("Bot",f"(ERROR): {str}")
 

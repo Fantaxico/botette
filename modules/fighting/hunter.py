@@ -1,5 +1,7 @@
 import time
 import random
+import requests
+import json
 import os
 import pyautogui
 from services.helper import helper
@@ -12,9 +14,7 @@ workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
 nameCoordinates = (927, 299, 1015, 315)
 
-def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, fleeFromFights):
-    assetsDir = thisDir + "/assets"
-    workingDir = thisDir + "/working_directory"
+def hunt(shared_variables, targets, moveToUse, doHunt, fleeFromFights):
     monImagePath = f"{workingDir}/mon_cropped.png"
     pinImagePath = f"{workingDir}/pin_cropped.png"
     debugMode = shared_variables["debugMode"].value 
@@ -48,7 +48,7 @@ def hunt(thisDir, shared_variables, targets, moveToUse, doHunt, fleeFromFights):
                             helper.sendMessage(pin)
                             button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
                             helper.clickAt(button_x, button_y)
-                            tryCatch(shared_variables, {"Name": "Pin Solver", "PriorityBall": { "Name" : "Ultra Ball"}})
+                            tryCatch(shared_variables, {"Name": "Pin Solver Encounter", "PriorityBall": { "Name" : "Ultra Ball"}})
                     else:
                         printx("Hunting..")
                         helper.takeGameScreenshotCropped(monImagePath, nameCoordinates, greyscale=True)
@@ -85,6 +85,7 @@ def fight(moveToUse):
         pyautogui.click()
 
 def tryCatch(shared_variables, target):
+    helper.sendDiscordNotification(f"Booo! Trying to catch {target["Name"]} with a {target["PriorityBall"]["Name"]}")
     while True:
         # We need battle check to know when its captured
         hasBattleScreen = helper.isImageVisableOnScreen(f'{assetsDir}/general/battle.png', 0.9)
