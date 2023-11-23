@@ -49,12 +49,12 @@ if __name__ == '__main__':
     time.sleep(2)
     helper.bringGameToFront()
     running_process = Process(target=runner.run, args=(shared_variables, runningDirection, runningInvert, runningRandomness))
-    fighting_process = Process(target=hunter.hunt, args=(thisDir, shared_variables, data["Targets"], moveToUse, doHunt, fleeFromFights))
+    fighting_process = Process(target=hunter.hunt, args=(shared_variables, data["Targets"], moveToUse, doHunt, fleeFromFights))
     chatting_process = Process(target=chatter.chat, args=(shared_variables,))
-    watching_process = Process(target=watcher.watch, args=(shared_variables,))
+    #watching_process = Process(target=watcher.watch, args=(shared_variables,))
 
     # Start all processes
     running_process.start()
     fighting_process.start()
     chatting_process.start()
-    watching_process.start()
+    #watching_process.start()
