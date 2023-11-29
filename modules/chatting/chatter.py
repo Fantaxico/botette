@@ -31,7 +31,11 @@ def chat(shared_variables):
                 x, y, width, height = hasBeenWhispered
 
                 # Text recognition
-                helper.takeGameScreenshotCropped(chatImagePath, (x+50, y+7, x+400, y+20), greyscale=True, basewidth=900)
+                helper.takeGameScreenshot(chatImagePath, (x+50, y+7, x+400, y+20), greyscaleOptions={
+                    "use": True, 
+                    "basewidth": 900
+                })
+                
                 chatText = helper.getTextFromImage(chatImagePath)
                 print("Chat:" + chatText)
 

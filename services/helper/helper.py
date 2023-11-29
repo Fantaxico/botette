@@ -15,34 +15,34 @@ load_dotenv()
 workingDir = os.getenv("WORKING_DIR")
 
 # Game Window
-game_window_title = "Pokemon Blaze Online"
+gameWindowTitle = "Pokemon Blaze Online"
 
 def getGameWindow():
     try:
-        game_window = gw.getWindowsWithTitle(game_window_title)[0]
-        return game_window, game_window.left, game_window.top, game_window.width, game_window.height
+        gameWindow = gw.getWindowsWithTitle(gameWindowTitle)[0]
+        return gameWindow, gameWindow.left, gameWindow.top, gameWindow.width, gameWindow.height
     except IndexError:
         printx("Bot", "Error: Game window not found.")
         exit()
 
 def bringGameToFront():
-    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
-    game_window.minimize()
-    game_window.restore()
-    game_window.activate()
+    gameWindow, gameWindow.left, gameWindow.top, gameWindow.width, gameWindow.height = getGameWindow()
+    gameWindow.minimize()
+    gameWindow.restore()
+    gameWindow.activate()
 
 def isGameActive():
-    active_window = gw.getActiveWindow()
-    if active_window:
-        return active_window.title == game_window_title
+    activeWindow = gw.getActiveWindow()
+    if activeWindow:
+        return activeWindow.title == gameWindowTitle
     else:
         False
 
 def calculateObjCoordinates(obj_x, obj_y):
-    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
+    gameWindow, gameWindow.left, gameWindow.top, gameWindow.width, gameWindow.height = getGameWindow()
     #printx("Debug", f"calculateObjCoordinates: {game_window.width, game_window.height}")
-    new_x = (obj_x / 1936) * game_window.width
-    new_y = (obj_y / 1048) * game_window.height
+    new_x = (obj_x / 1936) * gameWindow.width
+    new_y = (obj_y / 1048) * gameWindow.height
     return int(new_x), int(new_y)
 
 # Images
@@ -56,41 +56,76 @@ def getTextFromImage(imagePath):
     text = text.strip()
     return text
 
-def solvePin(image_path):
-    takeGameScreenshotCropped(image_path, (800, 490, 1100, 530))
-    pin_text = getTextFromImage(image_path)
-    pin = re.findall(r"\[(.*?)\]", pin_text)
-    if pin:
-        return pin[0]
-    else:
-        return None
+def solvePin(imagePath, pinCoordinates):
+    takeGameScreenshot(imagePath, pinCoordinates, full=False, greyscaleOptions= {
+        'use': True,
+        'basewidth': 100
+    },
+    extendOptions= {
+        'use': True
+    })
+    pin_text = getTextFromImage(imagePath + '.jpeg')
+    return pin_text
 
-def takeGameScreenshotCropped(imagePath, coordinates, greyscale = False, basewidth=300):
-    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
-    screenshot = ImageGrab.grab(
-        bbox=(
-            game_window.left, 
-            game_window.top, 
-            game_window.left + game_window.width, 
-            game_window.top + game_window.height
-        )
-    )
-    cropped_screenshot = screenshot.crop(coordinates)
-    cropped_screenshot.save(imagePath)
+def takeGameScreenshot(imagePath, coordinates, full=False ,greyscaleOptions=None, extendOptions=None):
+    # Options
+    if greyscaleOptions is None:
+        greyscaleOptions = {'use': False, 'basewidth': 300, 'baseheight': 0}
+    greyscale = greyscaleOptions.get('use', False)
+    basewidth = greyscaleOptions.get('basewidth', 300)
+    baseheight = greyscaleOptions.get('baseheight', 0)
+
+    if extendOptions is None:
+        extendOptions = {'use': False, 'size': 20}
+    extend = extendOptions.get('use', False)
+    size = extendOptions.get('size', 20)
+
+    #Logic
+    screenshot = getScreenshot()
+    if full:
+        screenshot.save(imagePath)
+        return
+    
+    croppedScreenshot = screenshot.crop(coordinates)
+    croppedScreenshot.save(imagePath)
+
+    optOutputPath = imagePath + '.jpeg'
     if greyscale:
-        greyScaleImage(imagePath, basewidth)
+        greyScaleImage(imagePath, optOutputPath ,basewidth, baseheight)
+    if extend:
+        extendImageBlack(optOutputPath, optOutputPath, size)
 
-def takeGameScreenshot(imagePath):
-    game_window, game_window.left, game_window.top, game_window.width, game_window.height = getGameWindow()
+def greyScaleImage(imagePath, outputPath, basewidth=300, baseHeight=0):
+    img = Image.open(imagePath)
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = baseHeight if baseHeight != 0 else int((float(img.size[1])*float(wpercent)))
+    img = img.resize((basewidth,hsize))
+    img.save(imagePath)
+
+    img = cv2.imread(imagePath)
+    grayscaled = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    retval, threshold2 = cv2.threshold(grayscaled,125,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    cv2.imwrite(outputPath,threshold2)
+
+def extendImageBlack(imagePath, outputPath, size):
+    image = Image.open(imagePath)
+    newWidth = image.width + 2 * size
+    newHeight = image.height + 2 * size
+    extImage = Image.new("RGB", (newWidth, newHeight), "black")
+    extImage.paste(image, (size, size))
+    extImage.save(outputPath)
+
+def getScreenshot():
+    gameWindow, gameWindow.left, gameWindow.top, gameWindow.width, gameWindow.height = getGameWindow()
     screenshot = ImageGrab.grab(
         bbox=(
-            game_window.left, 
-            game_window.top, 
-            game_window.left + game_window.width, 
-            game_window.top + game_window.height
+            gameWindow.left, 
+            gameWindow.top, 
+            gameWindow.left + gameWindow.width, 
+            gameWindow.top + gameWindow.height
         )
     )
-    screenshot.save(imagePath)
+    return screenshot
 
 # Controls
     
@@ -99,8 +134,8 @@ def clickAt(x, y, mouseButton='left'):
     pyautogui.click(button=mouseButton)
     time.sleep(0.3)
 
-def pressKey(key, min_seconds=0.01, max_seconds=0.06):
-    sleep_time = numberRandomize(min_seconds, max_seconds)
+def pressKey(key, minSeconds=0.01, maxSeconds=0.06):
+    sleep_time = numberRandomize(minSeconds, maxSeconds)
     pyautogui.keyDown(key)
     time.sleep(sleep_time)
     pyautogui.keyUp(key)
@@ -136,23 +171,12 @@ def swapIndex(array, index1, index2):
     array[index2] = temp1
     return array
 
-def greyScaleImage(imagePath, basewidth=300):
-    img = Image.open(imagePath)
-    wpercent = (basewidth/float(img.size[0]))
-    hsize = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((basewidth,hsize))
-    img.save(imagePath)
 
-    img = cv2.imread(imagePath)
-    grayscaled = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    retval, threshold2 = cv2.threshold(grayscaled,125,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    cv2.imwrite(imagePath + '.jpeg',threshold2)
-
-def numberRandomize(min_value, max_value, isInt = False):
+def numberRandomize(minValue, maxValue, isInt = False):
     if isInt:
-        res = random.randint(min_value, max_value)
+        res = random.randint(minValue, maxValue)
     else:
-        res = random.uniform(min_value, max_value)
+        res = random.uniform(minValue, maxValue)
     return res
 
 def calcStepTime(steps):
