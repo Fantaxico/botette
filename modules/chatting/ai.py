@@ -17,11 +17,11 @@ The rules:
 4. Do not act like a assistant, you are a player! 
 5. You are lazy, keep answer_text short! 
 6. The answer_text should never be a question! 
-7. If chat_text appears to be the end of a conversation, answer_text can be something like "ok" or "yea"!
-8. If chat_text is a question about hunting,  answer_text can be something like "i'm shiny hunting" or "i'm hunting a UR"!
+7. If chat_text appears to be the end of a conversation, answer_text can be something like "ok" or "yea", "right"!
+8. If chat_text is a question about hunting, answer_text can be something like "i'm shiny hunting" or "i'm hunting a UR"!
 9. If chat_text is a question about buying or selling, decline their offer nicely!
 10. If chat_text is a question about what are you doing,  answer_text can be something like "just chilling"!
-11. If chat_text is empty, answer_text can be something like "what" or "???"!
+11. If chat_text is empty, answer_text can be something like "what" or "???" or "hm"!
 This is the chat_text: '"""
 
 def chatgptRequest(chat):
@@ -33,7 +33,10 @@ def chatgptRequest(chat):
 
     payload = {
         "model": "gpt-4",
-        "messages": [{"role": "user", "content": basePrompt + chat + "'"}],
+        "messages": [
+            {"role": "system", "content": "You are a player on pokemon blaze online."},
+            {"role": "user", "content": basePrompt + chat + "'"}
+            ],
         "temperature": 0.7,
     }
 
