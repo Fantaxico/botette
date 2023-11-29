@@ -36,6 +36,11 @@ def hunt(shared_variables, targets, moveToUse, doHunt, fleeFromFights):
 
             if not isChatting and not isWatching and isFighting:
                 if doHunt:
+                    printx("Hunting..")
+                    helper.takeGameScreenshotCropped(monImagePath, nameCoordinates, greyscale=True)
+                    encounter = helper.getTextFromImage(monImagePath + '.jpeg')
+                    encounter = encounter.strip()
+                    printx("Encounter is: " + encounter)
                     pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
                     if pinSolver:
                         time.sleep(0.5)
@@ -48,13 +53,8 @@ def hunt(shared_variables, targets, moveToUse, doHunt, fleeFromFights):
                             helper.sendMessage(pin)
                             button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
                             helper.clickAt(button_x, button_y)
-                            tryCatch(shared_variables, {"Name": "Pin Solver Encounter", "PriorityBall": { "Name" : "Ultra Ball"}})
+                            tryCatch(shared_variables, {"Name": encounter, "PriorityBall": { "Name" : "Ultra Ball"}})
                     else:
-                        printx("Hunting..")
-                        helper.takeGameScreenshotCropped(monImagePath, nameCoordinates, greyscale=True)
-                        encounter = helper.getTextFromImage(monImagePath + '.jpeg')
-                        encounter = encounter.strip()
-                        printx("Encounter is: " + encounter)
                         for target in targets:
                             if encounter == target["Name"]:
                                 printx("Encounter is a target")
@@ -76,13 +76,10 @@ def flee():
     helper.clickAt(x, y)
 
 def fight(moveToUse):
-    printx(f"Fighting ({moveToUse})..")
-    parsed_move = moveToUse.replace(' ', '_').lower()
-    move_location = helper.isImageVisableOnScreen(f'{assetsDir}/moves/{parsed_move}.png')
-    if move_location:
-        x, y, width, height = move_location
-        pyautogui.moveTo(x, y)
-        pyautogui.click()
+    printx(f"Fighting.. ({moveToUse})")
+    x, y = getattr(locator, f"move_{moveToUse}", locator.move_1)
+    pyautogui.moveTo(x, y)
+    pyautogui.click()
 
 def tryCatch(shared_variables, target):
     helper.sendDiscordNotification(f"Booo! Trying to catch {target["Name"]} with a {target["PriorityBall"]["Name"]}")
