@@ -3,6 +3,12 @@ import random
 import pyautogui
 from services.helper import helper
 from services.locator import locator
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+assetsDir = os.getenv("ASSET_DIR")
+workingDir = os.getenv("WORKING_DIR")
 
 def watch(shared_variables):
     # We want it to run indefinitly
@@ -14,7 +20,7 @@ def watch(shared_variables):
             time.sleep(5)
             
             if not isChatting:
-                friendRequest = helper.isImageVisableOnScreen('assets/general/friend.png', 0.9)
+                friendRequest = helper.isImageVisableOnScreen(f'{assetsDir}/general/friend.png', 0.9)
                 if friendRequest:
                     printx("Friend request detected")
                     isWatching = selfSet(True, shared_variables)
@@ -22,8 +28,8 @@ def watch(shared_variables):
                     helper.clickAt(x, y)
                     isWatching = selfSet(False, shared_variables)
 
-                no = helper.isImageVisableOnScreen('assets/general/no.png', 0.9)
-                yes = helper.isImageVisableOnScreen('assets/general/yes.png', 0.9)
+                no = helper.isImageVisableOnScreen(f'{assetsDir}/general/no.png', 0.9)
+                yes = helper.isImageVisableOnScreen(f'{assetsDir}/general/yes.png', 0.9)
                 if no:
                     printx("Popup(no) detected")
                     isWatching = selfSet(True, shared_variables)
@@ -39,7 +45,7 @@ def watch(shared_variables):
                     isWatching = selfSet(False, shared_variables)
 
                 # Case if it is not a fighting pin
-                pinSolver = helper.isImageVisableOnScreen('assets/general/pin.png', 0.9)
+                pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
                 if pinSolver and not isFighting:
                     printx("Pin solver detected")
                     isWatching = selfSet(True, shared_variables)
