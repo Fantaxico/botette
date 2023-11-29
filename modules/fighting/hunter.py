@@ -14,7 +14,7 @@ workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
 nameCoordinates = (927, 299, 1015, 315)
 
-def hunt(shared_variables, targets, moveToUse, doHunt, fleeFromFights):
+def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromFights):
     monImagePath = f"{workingDir}/mon_cropped.png"
     pinImagePath = f"{workingDir}/pin_cropped.png"
     debugMode = shared_variables["debugMode"].value 
@@ -41,24 +41,30 @@ def hunt(shared_variables, targets, moveToUse, doHunt, fleeFromFights):
                     encounter = helper.getTextFromImage(monImagePath + '.jpeg')
                     encounter = encounter.strip()
                     printx("Encounter is: " + encounter)
-                    pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
-                    if pinSolver:
-                        time.sleep(0.5)
-                        printx("Pin solver detected")
-                        x, y, width, height = pinSolver
-                        pin = helper.solvePin(pinImagePath)
-                        if pin: 
-                            printx(f"Pin is {pin}") 
-                            helper.clickAt(x, y)
-                            helper.sendMessage(pin)
-                            button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
-                            helper.clickAt(button_x, button_y)
-                            tryCatch(shared_variables, {"Name": encounter, "PriorityBall": { "Name" : "Ultra Ball"}})
+                    for target in targets:
+                        if encounter == target["Name"]:
+                            printx("Encounter is a target")
+                            tryCatch(shared_variables, target)
                     else:
-                        for target in targets:
-                            if encounter == target["Name"]:
-                                printx("Encounter is a target")
-                                tryCatch(shared_variables, target)
+                        if autoBlazeRadar:
+                            pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
+                            if pinSolver:
+                                time.sleep(0.5)
+                                printx("Pin solver detected")
+                                x, y, width, height = pinSolver
+                                pin = helper.solvePin(pinImagePath)
+                                if pin: 
+                                    printx(f"Pin is {pin}") 
+                                    helper.clickAt(x, y)
+                                    helper.sendMessage(pin)
+                                    button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
+                                    helper.clickAt(button_x, button_y)
+                                    tryCatch(shared_variables, {"Name": encounter, "PriorityBall": { "Name" : "Ultra Ball"}})
+                            else:
+                                if fleeFromFights:
+                                    flee()
+                                else:
+                                    fight(moveToUse)
                         else:
                             if fleeFromFights:
                                 flee()
