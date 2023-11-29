@@ -2,7 +2,6 @@ from multiprocessing import Process, Value
 from services.helper import helper
 from modules.movement import runner
 from modules.chatting import chatter
-from modules.fighting import fighter
 from modules.fighting import hunter
 from modules.watching import watcher
 import time
@@ -17,6 +16,7 @@ if __name__ == '__main__':
         data = json.load(file)
     
     doHunt = data["HuntingMode"]
+    autoBlazeRadar = False
     fleeFromFights = data["FleeFromFights"]
     targets = [target['Name'] for target in data["Targets"]]
     moveToUse = data["MoveToUse"]
@@ -27,16 +27,18 @@ if __name__ == '__main__':
 
     helper.printx("Bot", "Starting..")
     if debugMode:
-         helper.printx("Debug", "-------------------------------")
+         helper.printx("Debug", "---------------------------------------")
          helper.printx("Debug",f"Bot directory: {thisDir}")
-         helper.printx("Debug",f"Running direction: {runningDirection}")
-         helper.printx("Debug",f"Running direction: {runningInvert}")
-         helper.printx("Debug",f"Running Randomness: {runningRandomness}")
-         helper.printx("Debug",f"HuntingMode: {doHunt}")
-         helper.printx("Debug",f"Catching targets: {targets}")
-         helper.printx("Debug",f"Flee from fights: {fleeFromFights}")
-         helper.printx("Debug",f"Fighting move: {moveToUse}")
-         helper.printx("Debug", "-------------------------------")
+         helper.printx("Debug", "--------------- RUNNING ---------------")
+         helper.printx("Debug",f"Direction: {runningDirection}")
+         helper.printx("Debug",f"Invert: {runningInvert}")
+         helper.printx("Debug",f"Randomness: {runningRandomness}")
+         helper.printx("Debug", "--------------- HUNTING ---------------")
+         helper.printx("Debug",f"Hunting: {doHunt}")
+         helper.printx("Debug",f"Targets: {targets}")
+         helper.printx("Debug",f"AutoBlazeRadar: {autoBlazeRadar}")
+         helper.printx("Debug",f"Flee from fights: {fleeFromFights}") if fleeFromFights else helper.printx("Debug",f"Fighting move: {moveToUse}")
+         helper.printx("Debug", "---------------------------------------")
             
     shared_variables = {
         "isRunning": Value('b', True),
@@ -49,7 +51,7 @@ if __name__ == '__main__':
     time.sleep(2)
     helper.bringGameToFront()
     running_process = Process(target=runner.run, args=(shared_variables, runningDirection, runningInvert, runningRandomness))
-    fighting_process = Process(target=hunter.hunt, args=(shared_variables, data["Targets"], moveToUse, doHunt, fleeFromFights))
+    fighting_process = Process(target=hunter.hunt, args=(shared_variables, data["Targets"], moveToUse, doHunt, autoBlazeRadar, fleeFromFights))
     chatting_process = Process(target=chatter.chat, args=(shared_variables,))
     #watching_process = Process(target=watcher.watch, args=(shared_variables,))
 
