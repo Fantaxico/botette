@@ -21,7 +21,7 @@ def watch(shared_variables):
             if offline:
                 x,y = locator.offline_ok
                 helper.clickAt(x,y)
-                helper.sendDiscordNotification("Booo! Seems like the connection got closed. Sadge, I'll back off.")
+                helper.sendDiscordNotification("Booo! Seems like the connection got closed")
                 helper.exitBot()
 
             if not isChatting:
@@ -31,6 +31,7 @@ def watch(shared_variables):
                     isWatching = selfSet(True, shared_variables)
                     x, y, width, height = friendRequest
                     helper.clickAt(x, y)
+                    helper.sendDiscordNotification("Booo! Someone wanted to be my friend")
                     isWatching = selfSet(False, shared_variables)
 
                 no = helper.isImageVisableOnScreen(f'{assetsDir}/general/no.png', 0.9)
@@ -52,10 +53,13 @@ def watch(shared_variables):
                 # Case if it is not a fighting pin
                 pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
                 if pinSolver and not isFighting:
-                    printx("Pin solver detected")
+                    pinImagePath = f"{workingDir}/pin_cropped.png"
+                    pinCoordinates = (921, 500, 955, 510)
+                    printx("Non-Fighting pin solver detected")
                     isWatching = selfSet(True, shared_variables)
                     x, y, width, height = pinSolver
-                    pin = helper.solvePin()
+                    pin = helper.solvePin(pinImagePath, pinCoordinates)
+                    helper.sendDiscordNotification("Booo! Careful, a suspicious pin solver out of battle. I think it is {pin}")
                     if pin: 
                         printx(f"Pin is {pin}")
                         helper.clickAt(x, y)

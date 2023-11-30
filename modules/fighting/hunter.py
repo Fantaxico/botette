@@ -56,6 +56,7 @@ def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromF
                                 printx("Pin solver detected")
                                 x, y, width, height = pinSolver
                                 pin = helper.solvePin(pinImagePath, pinCoordinates)
+                                helper.sendDiscordNotification("Booo! The blaze radar triggered. My guess is {pin}")
                                 if pin: 
                                     printx(f"Pin is {pin}") 
                                     helper.clickAt(x, y)
