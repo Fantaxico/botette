@@ -69,7 +69,7 @@ def chat(shared_variables):
                             pyautogui.click()
 
                             printx("Message sent")
-                            helper.sendDiscordNotification(f'Booo! Someone whispered to you: "{chatText}". My Answer was: "{response}"')
+                            helper.sendDiscordNotification(f'Booo! Someone whispered me: "{chatText}". I answered this: "{response}"')
                             isChatting = selfSet(False, shared_variables)
 
 

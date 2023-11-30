@@ -1,6 +1,4 @@
 import time
-import random
-import pyautogui
 from services.helper import helper
 from services.locator import locator
 import os
@@ -18,7 +16,14 @@ def watch(shared_variables):
             isFighting = shared_variables["isFighting"].value
             isWatching = shared_variables["isWatching"].value 
             time.sleep(5)
-            
+
+            offline = helper.isImageVisableOnScreen(f'{assetsDir}/general/offline.png', 0.9)
+            if offline:
+                x,y = locator.offline_ok
+                helper.clickAt(x,y)
+                helper.sendDiscordNotification("Booo! Seems like the connection got closed. Sadge, I'll back off.")
+                helper.exitBot()
+
             if not isChatting:
                 friendRequest = helper.isImageVisableOnScreen(f'{assetsDir}/general/friend.png', 0.9)
                 if friendRequest:

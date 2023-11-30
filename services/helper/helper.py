@@ -1,15 +1,17 @@
+from PIL import ImageGrab, Image
+from dotenv import load_dotenv
 import pygetwindow as gw
 import random
 import time
 import pyautogui
 import pytesseract
-import re
-from PIL import ImageGrab, Image
 import cv2
 import json
 import requests
 import os
-from dotenv import load_dotenv
+import psutil
+import os
+
 load_dotenv()
 
 workingDir = os.getenv("WORKING_DIR")
@@ -163,6 +165,36 @@ def sendDiscordNotification(message, withScreenshot=False):
 
 
 # Etc
+def exitBot():
+    terminateProcess("python.exe")
+    terminateProcess("BotetteUI.exe")
+
+def terminateProcess(name):
+    try:
+        pid = getPIDName(name)
+        parent = psutil.Process(pid)
+        children = parent.children(recursive=True)
+        
+        # Terminate the parent process
+        parent.terminate()
+        parent.wait(timeout=5)
+
+        # Terminate the child processes
+        for child in children:
+            child.terminate()
+            child.wait(timeout=5)
+        print(f"Process {pid} and its children terminated successfully.")
+
+    except psutil.NoSuchProcess as e:
+        print(f"Error: {e}")
+    except psutil.AccessDenied as e:
+        print(f"Error: {e}")
+
+def getPIDName(name):
+    for process in psutil.process_iter(['pid', 'name']):
+        printx("Debug", process.info['name'])
+        if process.info['name'] == name:
+            return process.info['pid']
 
 def swapIndex(array, index1, index2):
     temp1 = array[index1]

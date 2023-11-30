@@ -6,6 +6,7 @@ def coordinatesRelativeTo(relativeObj, diff_x = 0, diff_y = 0):
 
 bag = helper.calculateObjCoordinates(1314, 577) 
 run = helper.calculateObjCoordinates(1328, 623)
+offline_ok = helper.calculateObjCoordinates(957, 551)
 
 move_1 = helper.calculateObjCoordinates(1206, 275) 
 move_2 = coordinatesRelativeTo(move_1, diff_x=120)

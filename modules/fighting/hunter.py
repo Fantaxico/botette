@@ -12,7 +12,8 @@ load_dotenv()
 assetsDir = os.getenv("ASSET_DIR")
 workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
-nameCoordinates = (927, 299, 1015, 315)
+nameCoordinates = (927, 299, 1015, 310)
+pinCoordinates = (921, 500, 955, 510)
 
 def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromFights):
     monImagePath = f"{workingDir}/mon_cropped.png"
@@ -37,7 +38,9 @@ def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromF
             if not isChatting and not isWatching and isFighting:
                 if doHunt:
                     printx("Hunting..")
-                    helper.takeGameScreenshotCropped(monImagePath, nameCoordinates, greyscale=True)
+                    helper.takeGameScreenshot(monImagePath, nameCoordinates, greyscaleOptions={
+                        'use': True
+                    })
                     encounter = helper.getTextFromImage(monImagePath + '.jpeg')
                     encounter = encounter.strip()
                     printx("Encounter is: " + encounter)
@@ -52,7 +55,7 @@ def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromF
                                 time.sleep(0.5)
                                 printx("Pin solver detected")
                                 x, y, width, height = pinSolver
-                                pin = helper.solvePin(pinImagePath)
+                                pin = helper.solvePin(pinImagePath, pinCoordinates)
                                 if pin: 
                                     printx(f"Pin is {pin}") 
                                     helper.clickAt(x, y)

@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     helper.printx("Bot", "Starting..")
     if debugMode:
-         helper.printx("Debug", "---------------------------------------")
+         helper.printx("Debug", "--------------- DEFAULT ---------------")
          helper.printx("Debug",f"Bot directory: {thisDir}")
          helper.printx("Debug", "--------------- RUNNING ---------------")
          helper.printx("Debug",f"Direction: {runningDirection}")
@@ -53,10 +53,10 @@ if __name__ == '__main__':
     running_process = Process(target=runner.run, args=(shared_variables, runningDirection, runningInvert, runningRandomness))
     fighting_process = Process(target=hunter.hunt, args=(shared_variables, data["Targets"], moveToUse, doHunt, autoBlazeRadar, fleeFromFights))
     chatting_process = Process(target=chatter.chat, args=(shared_variables,))
-    #watching_process = Process(target=watcher.watch, args=(shared_variables,))
+    watching_process = Process(target=watcher.watch, args=(shared_variables,))
 
     # Start all processes
     running_process.start()
     fighting_process.start()
     chatting_process.start()
-    #watching_process.start()
+    watching_process.start()
