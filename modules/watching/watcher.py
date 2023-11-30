@@ -11,7 +11,7 @@ workingDir = os.getenv("WORKING_DIR")
 def watch(shared_variables, general_options, notification_options):
     # We want it to run indefinitly
     discordUserId = general_options["discordUserId"]
-    tickWatcher = general_options["TickWatcher"]
+    tickWatcher = general_options["tickWatcher"]
     
     while True:
         if helper.isGameActive():
@@ -19,7 +19,7 @@ def watch(shared_variables, general_options, notification_options):
             isFighting = shared_variables["isFighting"].value
             isWatching = shared_variables["isWatching"].value 
             time.sleep(tickWatcher)
-
+            printx("Screen monitoring..")
             offline = helper.isImageVisableOnScreen(f'{assetsDir}/general/offline.png', 0.9)
             if offline:
                 x,y = locator.offline_ok

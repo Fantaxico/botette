@@ -17,7 +17,7 @@ chatCoordinates = (1520, 830, 1920, 1030)
 def chat(shared_variables, general_options, notification_options):
     discordUserId = general_options["discordUserId"]
     chatImagePath = f"{workingDir}/chat_cropped.png"
-    tickChatter = general_options["TickChatter"]
+    tickChatter = general_options["tickChatter"]
 
     # We want it to run indefinitly
     while True:
@@ -37,6 +37,9 @@ def chat(shared_variables, general_options, notification_options):
                 helper.takeGameScreenshot(chatImagePath, (x+50, y+7, x+400, y+20), greyscaleOptions={
                     "use": True, 
                     "basewidth": 900
+                },
+                extendOptions={
+                    "use": True
                 })
                 
                 chatText = helper.getTextFromImage(chatImagePath)

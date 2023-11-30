@@ -15,7 +15,7 @@ def run(shared_variables, general_options, running_options):
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
             isRunning = shared_variables["isRunning"].value
-            
+
             if isFighting or isChatting:
                 isRunning = selfSet(False, shared_variables)
             else:
@@ -24,7 +24,7 @@ def run(shared_variables, general_options, running_options):
             if isRunning:
                 rand = helper.numberRandomize(0, 1)
                 holdTimes = (0.44, 0.49)
-                # 10% chance to occur
+                # x% chance to occur
                 if rand <= (randomness / 10):
                      # Randomize less steps to go
                      rand = helper.numberRandomize(1, 3, isInt=True)

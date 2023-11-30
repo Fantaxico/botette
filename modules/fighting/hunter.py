@@ -12,7 +12,7 @@ load_dotenv()
 assetsDir = os.getenv("ASSET_DIR")
 workingDir = os.getenv("WORKING_DIR")
 #(left, upper, right, lower)
-nameCoordinates = (927, 299, 1015, 310)
+nameCoordinates = (927, 299, 1015, 313)
 pinCoordinates = (921, 500, 955, 510)
 
 def hunt(shared_variables, general_options, hunting_options, notification_options, targets):
@@ -45,6 +45,10 @@ def hunt(shared_variables, general_options, hunting_options, notification_option
                 if doHunt:
                     printx("Hunting..")
                     helper.takeGameScreenshot(monImagePath, nameCoordinates, greyscaleOptions={
+                        'use': True,
+                        'basewidth': 200
+                    }, 
+                    extendOptions={
                         'use': True
                     })
                     encounter = helper.getTextFromImage(monImagePath + '.jpeg')
