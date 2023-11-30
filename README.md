@@ -9,7 +9,7 @@
 - [Authors & Contributers](#authors)
 
 ## Getting Started
-Check out [BotetteUI](https://github.com/Fantaxico/botetteUI) it is a useful UI tool for more readable and direct access. 
+It is highly advised to use [BotetteUI](https://github.com/Fantaxico/botetteUI) it is a UI tool for more readable and direct access 
 
 ### Installation
 Install dependencies [tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
