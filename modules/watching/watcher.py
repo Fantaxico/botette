@@ -8,20 +8,23 @@ load_dotenv()
 assetsDir = os.getenv("ASSET_DIR")
 workingDir = os.getenv("WORKING_DIR")
 
-def watch(shared_variables):
+def watch(shared_variables, general_options, notification_options):
     # We want it to run indefinitly
+    discordUserId = general_options["discordUserId"]
+    tickWatcher = general_options["TickWatcher"]
+    
     while True:
         if helper.isGameActive():
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
             isWatching = shared_variables["isWatching"].value 
-            time.sleep(5)
+            time.sleep(tickWatcher)
 
             offline = helper.isImageVisableOnScreen(f'{assetsDir}/general/offline.png', 0.9)
             if offline:
                 x,y = locator.offline_ok
                 helper.clickAt(x,y)
-                helper.sendDiscordNotification("Booo! Seems like the connection got closed")
+                if notification_options["OnDisconnect"]: helper.sendDiscordNotification("Seems like your connection got closed", discordUserId)
                 helper.exitBot()
 
             if not isChatting:
@@ -31,7 +34,7 @@ def watch(shared_variables):
                     isWatching = selfSet(True, shared_variables)
                     x, y, width, height = friendRequest
                     helper.clickAt(x, y)
-                    helper.sendDiscordNotification("Booo! Someone wanted to be my friend")
+                    if notification_options["OnFriendRequest"]: helper.sendDiscordNotification("Someone wants to be your friend", discordUserId)
                     isWatching = selfSet(False, shared_variables)
 
                 no = helper.isImageVisableOnScreen(f'{assetsDir}/general/no.png', 0.9)
@@ -59,7 +62,7 @@ def watch(shared_variables):
                     isWatching = selfSet(True, shared_variables)
                     x, y, width, height = pinSolver
                     pin = helper.solvePin(pinImagePath, pinCoordinates)
-                    helper.sendDiscordNotification("Booo! Careful, a suspicious pin solver out of battle. I think it is {pin}")
+                    if notification_options["OnAdminPin"]: helper.sendDiscordNotification("Careful, a suspicious pin solver out of battle. I think it is `{pin}`", discordUserId)
                     if pin: 
                         printx(f"Pin is {pin}")
                         helper.clickAt(x, y)

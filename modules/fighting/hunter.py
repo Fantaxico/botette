@@ -15,10 +15,16 @@ workingDir = os.getenv("WORKING_DIR")
 nameCoordinates = (927, 299, 1015, 310)
 pinCoordinates = (921, 500, 955, 510)
 
-def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromFights):
+def hunt(shared_variables, general_options, hunting_options, notification_options, targets):
     monImagePath = f"{workingDir}/mon_cropped.png"
     pinImagePath = f"{workingDir}/pin_cropped.png"
+    ballImagePath = f"{workingDir}/ball_cropped.png"
     debugMode = shared_variables["debugMode"].value 
+    moveToUse = hunting_options["moveToUse"]
+    doHunt = hunting_options["doHunt"]
+    autoBlazeRadar = hunting_options["autoBlazeRadar"]
+    fleeFromFights = hunting_options["fleeFromFights"]
+    discordUserId = general_options["discordUserId"]
 
     # We want it to run indefinitly
     while True:
@@ -47,7 +53,7 @@ def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromF
                     for target in targets:
                         if encounter == target["Name"]:
                             printx("Encounter is a target")
-                            tryCatch(shared_variables, target)
+                            tryCatch(shared_variables, notification_options, discordUserId, ballImagePath, moveToUse, target)
                     else:
                         if autoBlazeRadar:
                             pinSolver = helper.isImageVisableOnScreen(f'{assetsDir}/general/pin.png', 0.9)
@@ -56,14 +62,14 @@ def hunt(shared_variables, targets, moveToUse, doHunt, autoBlazeRadar, fleeFromF
                                 printx("Pin solver detected")
                                 x, y, width, height = pinSolver
                                 pin = helper.solvePin(pinImagePath, pinCoordinates)
-                                helper.sendDiscordNotification("Booo! The blaze radar triggered. My guess is {pin}")
+                                if notification_options["OnBlazeRadar"]: helper.sendDiscordNotification("Your blaze radar triggered. My guess is `{pin}`", discordUserId)
                                 if pin: 
                                     printx(f"Pin is {pin}") 
                                     helper.clickAt(x, y)
                                     helper.sendMessage(pin)
                                     button_x, button_y = locator.coordinatesRelativeTo(pinSolver, diff_y=40)
                                     helper.clickAt(button_x, button_y)
-                                    tryCatch(shared_variables, {"Name": encounter, "PriorityBall": { "Name" : "Ultra Ball"}})
+                                    tryCatch(shared_variables, notification_options, discordUserId, ballImagePath, moveToUse,  {"Name": encounter, "PriorityBall": { "Name" : "Ultra Ball"}})
                             else:
                                 if fleeFromFights:
                                     flee()
@@ -91,8 +97,13 @@ def fight(moveToUse):
     pyautogui.moveTo(x, y)
     pyautogui.click()
 
-def tryCatch(shared_variables, target):
-    helper.sendDiscordNotification(f"Booo! Trying to catch {target["Name"]} with a {target["PriorityBall"]["Name"]}")
+def tryCatch(shared_variables, notification_options, discordUserId, ballImagePath, moveToUse, target):
+    ballName = target["PriorityBall"]["Name"]
+    if notification_options["OnCatchAttempt"]: 
+        if notification_options["IsAnonymous"]:
+            helper.sendDiscordNotification(f"Trying to catch a target", discordUserId)
+        else:
+            helper.sendDiscordNotification(f"Trying to catch target `{target["Name"]}` with an `{ballName}`", discordUserId)
     while True:
         # We need battle check to know when its captured
         hasBattleScreen = helper.isImageVisableOnScreen(f'{assetsDir}/general/battle.png', 0.9)
@@ -103,22 +114,46 @@ def tryCatch(shared_variables, target):
             if not isChatting and not isWatching:
                 bag_x, bag_y = locator.bag
                 helper.clickAt(bag_x, bag_y)
-                bag = [
-                    (target["PriorityBall"]["Name"],f'{assetsDir}/general/balls/{target["PriorityBall"]["Name"].lower()}.png'),
-                    ('Ultra Ball', f'{assetsDir}/general/balls/ultra ball.png'),
-                    ('Master Ball', f'{assetsDir}/general/balls/master ball.png'),
-                    ('Great Ball', f'{assetsDir}/general/balls/great ball.png')
-                ]
-                for ball, image in bag:
-                    hasBall = helper.isImageVisableOnScreen(image, 0.9)
-                    if hasBall:
-                        time.sleep(3)
-                        printx(f"Using a {ball}")
-                        x, y, width, height = hasBall
-                        helper.clickAt(x, y)
-                        break
-                    else:
-                        return
+                ballImage = f'{assetsDir}/general/balls/{ballName.lower()}.png'
+                hasBall = helper.isImageVisableOnScreen(ballImage, 0.9)
+                if hasBall:
+                    time.sleep(3)
+                    x, y, width, height = hasBall
+                    ballCoordinates = (x+20, y+25, x+41, y+39)
+                    helper.takeGameScreenshot(ballImagePath, ballCoordinates, greyscaleOptions={
+                        'use': True,
+                        'basewidth': 90
+                    }, 
+                    extendOptions={
+                        'use': True,
+                        'size': 50
+                    })
+                    ballCountText = helper.getTextFromImage(ballImagePath + '.jpeg')
+                    count = int(ballCountText.split('x')[1])
+                    if count == 10 or count == 5:
+                        if notification_options["OnBallCount"]: 
+                            if notification_options["IsAnonymous"]:
+                                helper.sendDiscordNotification(f"Careful, there are only a few of your Pokeball left", discordUserId)
+                            else:
+                                helper.sendDiscordNotification(f"Careful, there are only `{count}` `{ballName}s` left", discordUserId)
+                    printx(f"Using a {ballName} ({count - 1} left)")
+                    helper.clickAt(x, y)
+                else:
+                    if notification_options["OnCatchAttempt"]: 
+                        if notification_options["IsAnonymous"]:
+                            helper.sendDiscordNotification(f"Damn, no balls left.. I'll kill the target", discordUserId)
+                        else:
+                            helper.sendDiscordNotification(f"Damn, no more `{ballName}`s left to catch `{target["Name"]}`.. I'm killing it", discordUserId)
+                    fight(moveToUse)
+                    rand = helper.numberRandomize(0, 1)
+                    if rand <= (5 / 10):
+                        x,y = locator.chat
+                        helper.clickAt(x,y)
+                        helper.sendMessage("f")
+
+                    time.sleep(120)
+                    helper.exitBot()
+
         else:
             return
 

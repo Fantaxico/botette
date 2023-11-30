@@ -14,14 +14,17 @@ workingDir = os.getenv("WORKING_DIR")
 chatCoordinates = (1520, 830, 1920, 1030)
 
 
-def chat(shared_variables):
+def chat(shared_variables, general_options, notification_options):
+    discordUserId = general_options["discordUserId"]
     chatImagePath = f"{workingDir}/chat_cropped.png"
+    tickChatter = general_options["TickChatter"]
+
     # We want it to run indefinitly
     while True:
         if helper.isGameActive():
             isChatting = shared_variables["isChatting"].value
             isFighting = shared_variables["isFighting"].value
-            time.sleep(1)
+            time.sleep(tickChatter)
             printx("Screen monitoring..")
             hasBeenWhispered = helper.isImageVisableOnScreen(f'{assetsDir}/chat/whisper_from.png', 0.9)                
             if hasBeenWhispered:
@@ -69,7 +72,11 @@ def chat(shared_variables):
                             pyautogui.click()
 
                             printx("Message sent")
-                            helper.sendDiscordNotification(f'Booo! Someone whispered me: "{chatText}". I answered this: "{response}"')
+                            if notification_options["OnWisperMessage"]:
+                                if notification_options["IsAnonymous"]:
+                                    helper.sendDiscordNotification(f'Someone whispered to you. I took care of the answer', discordUserId)
+                                else:
+                                    helper.sendDiscordNotification(f'Someone whispered to you: `{chatText}`. I answered this: `{response}`', discordUserId)
                             isChatting = selfSet(False, shared_variables)
 
 

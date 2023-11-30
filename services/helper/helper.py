@@ -15,6 +15,7 @@ import os
 load_dotenv()
 
 workingDir = os.getenv("WORKING_DIR")
+webhookUrl = os.getenv("DISCORD_WEBHOOK")
 
 # Game Window
 gameWindowTitle = "Pokemon Blaze Online"
@@ -148,10 +149,15 @@ def sendMessage(text):
 
 # Notifications
 
-def sendDiscordNotification(message, withScreenshot=False):
-    webhook_url = 'https://discord.com/api/webhooks/1176979268119576576/-KdIk8HJDBgy-452JQBW4o6IOssV8FNWHCZUW5yb6xw1Uxj5HKGK2jZcZ9ybTA_vm9On'
+def sendDiscordNotification(message, userId=None, withScreenshot=False):   
+    if userId is None or userId == "":
+        printx("Bot", f"Failed to send notification. No userId given.")
+        return 
+
+    preset = f"Booo! <@{userId}>"
+    webhook_url = webhookUrl
     data = {
-        'content': message
+        'content': f'{preset} {message}'
     }
     headers = {
         'Content-Type': 'application/json',

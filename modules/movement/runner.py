@@ -1,8 +1,12 @@
 import time
 from services.helper import helper
 
-def run(shared_variables, direction, invert, randomness):
-    directions = direction.split("/")
+def run(shared_variables, general_options, running_options):
+    randomness = running_options["runningRandomness"]
+    invert = running_options["runningInvert"]
+    directions = running_options["runningDirection"].split("/")
+    discordUserId = general_options["discordUserId"]
+    
     if invert: directions = helper.swapIndex(directions, 0, 1)
     debugMode = shared_variables["debugMode"].value 
     # We want it to run indefinitly
