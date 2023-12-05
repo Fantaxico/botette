@@ -171,6 +171,12 @@ def sendDiscordNotification(message, userId=None, withScreenshot=False):
 
 
 # Etc
+def containsConsecutiveChars(text1, text2):
+    for i in range(len(text2) - 2):
+        if text2[i:i+3] in text1:
+            return True
+    return False
+
 def exitBot():
     terminateProcess("python.exe")
     terminateProcess("BotetteUI.exe")
