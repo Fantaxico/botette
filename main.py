@@ -97,8 +97,8 @@ if __name__ == '__main__':
     time.sleep(2)
     helper.bringGameToFront()
     running_process = Process(target=runner.run, args=(shared_variables, general_options, running_options))
-    fighting_process = Process(target=hunter.hunt, args=(shared_variables, general_options, hunting_options, notification_options ,data["Targets"]))
-    chatting_process = Process(target=chatter.chat, args=(shared_variables, general_options, notification_options))
+    fighting_process = Process(target=hunter.hunt, args=(shared_variables, general_options, hunting_options, notification_options, data["Targets"]))
+    chatting_process = Process(target=chatter.chat, args=(shared_variables, general_options, notification_options, running_options, data["Targets"]))
     watching_process = Process(target=watcher.watch, args=(shared_variables, general_options, notification_options))
 
     # Start all processes

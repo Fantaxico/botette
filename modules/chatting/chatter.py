@@ -14,10 +14,11 @@ workingDir = os.getenv("WORKING_DIR")
 chatCoordinates = (1520, 830, 1920, 1030)
 
 
-def chat(shared_variables, general_options, notification_options):
+def chat(shared_variables, general_options, notification_options, running_options, targets):
     discordUserId = general_options["discordUserId"]
     chatImagePath = f"{workingDir}/chat_cropped.png"
     tickChatter = general_options["tickChatter"]
+    stopSecondsAfterChat = running_options["stopSecondsAfterChat"]
 
     # We want it to run indefinitly
     while True:
@@ -46,7 +47,11 @@ def chat(shared_variables, general_options, notification_options):
                 print("Chat:" + chatText)
 
                 # AI
-                response = ai.chatgptRequest(chatText)
+                if targets:
+                    targetsString = ', '.join(map(str, targets))
+                    response = ai.chatgptRequest(chatText, targetsString)
+                else:
+                    response = ai.chatgptRequest(chatText)
 
                 helper.clickAt(x, y, mouseButton='right')
                 whisperTo = helper.isImageVisableOnScreen(f'{assetsDir}/chat/whisper_button.png', 0.9)
@@ -80,6 +85,8 @@ def chat(shared_variables, general_options, notification_options):
                                     helper.sendDiscordNotification(f'Someone whispered to you. I took care of the answer', discordUserId)
                                 else:
                                     helper.sendDiscordNotification(f'Someone whispered to you: `{chatText}`. I answered this: `{response}`', discordUserId)
+                                
+                            time.sleep(stopSecondsAfterChat)
                             isChatting = selfSet(False, shared_variables)
 
 
