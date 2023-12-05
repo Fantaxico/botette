@@ -55,7 +55,7 @@ def hunt(shared_variables, general_options, hunting_options, notification_option
                     encounter = encounter.strip()
                     printx("Encounter is: " + encounter)
                     for target in targets:
-                        if encounter == target["Name"]:
+                        if encounter == target["Name"] or helper.containsConsecutiveChars(target["Name"], encounter):
                             printx("Encounter is a target")
                             tryCatch(shared_variables, notification_options, discordUserId, ballImagePath, moveToUse, target)
                     else:
